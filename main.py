@@ -14,6 +14,7 @@ client = genai.Client(api_key=api_key)
 
 parser = argparse.ArgumentParser(description="AI Agent")
 parser.add_argument("user_prompt", type=str, help="User prompt")
+parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
 args = parser.parse_args()
 
 from google.genai import types
@@ -28,8 +29,9 @@ if response.usage_metadata == None:
 
 def main():
     print("Hello from ai-agent!")
-    print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-    print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+    if args.verbose:
+        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
     print(response.text)
 
 
