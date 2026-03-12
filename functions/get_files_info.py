@@ -8,12 +8,12 @@ def get_files_info(working_directory, directory="."):
     valid_target_dir = os.path.commonpath([working_dir_abs, target_dir]) == working_dir_abs
 
     if not valid_target_dir:
-        raise Exception(f'Error: Cannot list "{directory}" as it is outside the permitted working directory')
+        return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
     
     existing_dir = os.path.isdir(target_dir)
     
     if not existing_dir:
-        raise Exception(f'Error: "{directory}" is not a directory')
+        return f'Error: "{directory}" is not a directory'
     
     dir_contents = os.listdir(target_dir)
     files = []
@@ -24,10 +24,10 @@ def get_files_info(working_directory, directory="."):
         is_dir = os.path.isdir(filepath)
         is_file = os.path.isfile(filepath)
 
-        if not is_dir or is_file:
-            raise Exception(f'Error: "{file}" is not a valid file or directory')
+        if not is_dir and not is_file:
+            return f'Error: "{file}" is not a valid file or directory'
 
-        file_size = os.path.getsize(file)
+        file_size = os.path.getsize(filepath)
 
         file_data = f"- {file}: file_size={file_size} bytes, is_dir={is_dir}"
 
