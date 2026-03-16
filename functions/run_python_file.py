@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 def run_python_file(working_dir, filepath, args=None):
     try:
@@ -7,7 +8,7 @@ def run_python_file(working_dir, filepath, args=None):
         valid_filepath = os.path.commonpath([working_dir_abs, target_file]) == working_dir_abs
     
         if not valid_filepath:
-            return f'Error: Cannot read "{filepath}" as it is outside the permitted working directory'
+            return f'Error: Cannot execute "{filepath}" as it is outside the permitted working directory'
 
         if not os.path.isfile(target_file):
             return f'Error: "{filepath}" does not exist or is not a regular file'
@@ -18,7 +19,7 @@ def run_python_file(working_dir, filepath, args=None):
         command = ["python", target_file]
 
         if args != None:
-            command = command.extend(args)
+            command.extend(args)
         
         completed_process = subprocess.run(command, capture_output=True, text=True, timeout=30, cwd=working_dir_abs)
 
