@@ -2,7 +2,7 @@ import os
 import argparse
 from dotenv import load_dotenv
 from prompts import system_prompt
-from call_function import available_functions
+from call_function import available_functions, call_function
 
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
@@ -43,10 +43,18 @@ def main():
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
     if len(response.function_calls) > 0:
-        function_list = []
+        function_results = []
         for function_call in response.function_calls:
-            function_list.append(format_function(function_call.name, function_call.args))
-        print("\n".join(function_list))
+            function_call_result = call_function(function_call)
+            if len(function_call_result.parts) < 1 or len(function_call_result.parts) == None:
+                raise Exception("invalid function result: no .parts list")
+            if function_call_result.parts[0].function_response == None:
+                raise Exception("invalid function result: no function_response")
+            if function_call_result.parts[0].function_response.response == None:
+                raise Exception("invalid function result: no function_response.response")
+            function_results.append(function_call_result.parts[0])
+            if args.verbose:
+                print(f"-> {function_call_result.parts[0].function_response.response}")
     if len(response.function_calls) == 0:
         print(response.text)
 

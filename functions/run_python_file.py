@@ -8,9 +8,9 @@ schema_run_python_file = types.FunctionDeclaration(
     description="Runs a .py file in a specified file path relative to the working directory, returning the stdout, stderr and any non-zero exit code.",
     parameters=types.Schema(
         type=types.Type.OBJECT,
-        required=["filepath"],
+        required=["file_path"],
         properties={
-            "filepath": types.Schema(
+            "file_path": types.Schema(
                 type=types.Type.STRING,
                 description="File path to be run, relative to the working directory.",
             ),
@@ -26,20 +26,20 @@ schema_run_python_file = types.FunctionDeclaration(
     ),
 )
 
-def run_python_file(working_dir, filepath, args=None):
+def run_python_file(working_directory, file_path, args=None):
     try:
-        working_dir_abs = os.path.abspath(working_dir)
-        target_file = os.path.normpath(os.path.join(working_dir_abs, filepath))
+        working_dir_abs = os.path.abspath(working_directory)
+        target_file = os.path.normpath(os.path.join(working_dir_abs, file_path))
         valid_filepath = os.path.commonpath([working_dir_abs, target_file]) == working_dir_abs
     
         if not valid_filepath:
-            return f'Error: Cannot execute "{filepath}" as it is outside the permitted working directory'
+            return f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
 
         if not os.path.isfile(target_file):
-            return f'Error: "{filepath}" does not exist or is not a regular file'
+            return f'Error: "{file_path}" does not exist or is not a regular file'
         
-        if filepath[-3:] != ".py":
-            return f'Error: "{filepath}" is not a Python file'
+        if file_path[-3:] != ".py":
+            return f'Error: "{file_path}" is not a Python file'
         
         command = ["python", target_file]
 
