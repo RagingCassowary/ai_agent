@@ -45,7 +45,7 @@ def main():
             print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
             print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
         
-        if len(response.function_calls) > 0:
+        if response.function_calls != None and len(response.function_calls) > 0:
             function_results = []
             for function_call in response.function_calls:
                 function_call_result = call_function(function_call)
@@ -60,7 +60,7 @@ def main():
                     print(f"-> {function_call_result.parts[0].function_response.response}")
             messages.append(types.Content(role="user", parts=function_results))
         
-        if len(response.function_calls) == 0:
+        if response.function_calls == None:
             print(response.text)
             return
         
